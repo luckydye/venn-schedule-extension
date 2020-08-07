@@ -1,11 +1,63 @@
 .App {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'GothamNarrow', Arial, Helvetica, sans-serif;
+    color: #010101;
 }
 
-.App-light{
-    color:#232127;
+.navigation {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 15px 0;
 }
 
-.App-dark{
-    color:#e5e3e8;
+.navigation-item {
+    font-weight: 500;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.navigation-item[active="true"] {
+    background: rgb(1 1 1 / 20%);
+    color: #eee;
+}
+.navigation-item:hover {
+    background: rgb(1 1 1 / 20%);
+}
+.navigation-item:active {
+    background: rgb(1 1 1 / 10%);
+}
+
+.program-list-header {
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+    background: #ff7d00;
+}
+
+.program-time {
+    width: 50px;
+    font-size: 20px;
+    margin-right: 5px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.program-list {
+    margin: 10px 0;
+}
+
+.program-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(#ffed00, #ffa700);
+    padding: 15px 10px;
+    margin-bottom: 20px;
+    height: calc(25px * var(--length));
+}
+
+.program-title {
+    flex: 1;
+    font-size: 20px;
+    text-align: center;
 }

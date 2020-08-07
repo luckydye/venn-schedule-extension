@@ -1,90 +1,139 @@
 import React from 'react'
-import Authentication from '../../util/Authentication/Authentication'
 
 import './App.css'
 
-export default class App extends React.Component{
-    constructor(props){
+const timeZoneMap = {
+    '-2': ""
+}
+
+export default class App extends React.Component {
+    constructor(props) {
         super(props)
-        this.Authentication = new Authentication()
 
         //if the extension is running on twitch or dev rig, set the shorthand here. otherwise, set to null. 
         this.twitch = window.Twitch ? window.Twitch.ext : null
-        this.state={
-            finishedLoading:false,
-            theme:'light',
-            isVisible:true
+        this.state = {
+            theme: 'light',
+            isVisible: true,
+            activeTab: 0,
+            program: []
         }
     }
 
-    contextUpdate(context, delta){
-        if(delta.includes('theme')){
-            this.setState(()=>{
-                return {theme:context.theme}
+    contextUpdate(context, delta) {
+        if (delta.includes('theme')) {
+            this.setState(() => {
+                return { theme: context.theme }
             })
         }
     }
 
-    visibilityChanged(isVisible){
-        this.setState(()=>{
+    visibilityChanged(isVisible) {
+        this.setState(() => {
             return {
                 isVisible
             }
         })
     }
 
-    componentDidMount(){
-        if(this.twitch){
-            this.twitch.onAuthorized((auth)=>{
-                this.Authentication.setToken(auth.token, auth.userId)
-                if(!this.state.finishedLoading){
-                    // if the component hasn't finished loading (as in we've not set up after getting a token), let's set it up now.
-
-                    // now we've done the setup for the component, let's set the state to true to force a rerender with the correct data.
-                    this.setState(()=>{
-                        return {finishedLoading:true}
-                    })
-                }
-            })
-
-            this.twitch.listen('broadcast',(target,contentType,body)=>{
-                this.twitch.rig.log(`New PubSub message!\n${target}\n${contentType}\n${body}`)
-                // now that you've got a listener, do something with the result... 
-
-                // do something...
-
-            })
-
-            this.twitch.onVisibilityChanged((isVisible,_c)=>{
-                this.visibilityChanged(isVisible)
-            })
-
-            this.twitch.onContext((context,delta)=>{
-                this.contextUpdate(context,delta)
-            })
-        }
+    componentDidMount() {
+        this.setProgram([
+            {
+                length: 1,
+                time: "December 17, 1995 11:00:00-08:00",
+                name: "The Download",
+            },
+            {
+                length: 2,
+                time: "December 17, 1995 13:00:00-08:00",
+                name: "Guest House",
+            },
+            {
+                length: 1,
+                time: "December 17, 1995 15:00:00-08:00",
+                name: "VENN Arcade Live",
+            },
+            {
+                length: 1,
+                time: "December 17, 1995 19:00:00-08:00",
+                name: "Looking for Gains",
+            },
+        ]);
     }
 
-    componentWillUnmount(){
-        if(this.twitch){
-            this.twitch.unlisten('broadcast', ()=>console.log('successfully unlistened'))
-        }
+    setProgram(program) {
+        this.setState(() => ({ program }));
     }
-    
-    render(){
-        if(this.state.finishedLoading && this.state.isVisible){
+
+    switchTab(tabIndex) {
+        this.setState(() => ({
+            activeTab: tabIndex
+        }));
+    }
+
+    render() {
+        const placeholderData = {
+            days: [
+                "Thursday",
+                "Friday",
+                "Saturday",
+            ],
+            program: this.state.program
+        }
+
+        if (this.state.isVisible) {
             return (
                 <div className="App">
-                    <div className={this.state.theme === 'light' ? 'App-light' : 'App-dark'} >
-                        <p>Hello world!</p>
-                        <p>My token is: {this.Authentication.state.token}</p>
-                        <p>My opaque ID is {this.Authentication.getOpaqueId()}.</p>
-                        <div>{this.Authentication.isModerator() ? <p>I am currently a mod, and here's a special mod button <input value='mod button' type='button'/></p>  : 'I am currently not a mod.'}</div>
-                        <p>I have {this.Authentication.hasSharedId() ? `shared my ID, and my user_id is ${this.Authentication.getUserId()}` : 'not shared my ID'}.</p>
+
+                    <div className="navigation">
+                        <div className="navigation-item" 
+                            onClick={() => this.switchTab(0)}
+                            active={this.state.activeTab == 0 ? "true" : "false"}>Thursday</div>
+
+                        <div className="navigation-item" 
+                            onClick={() => this.switchTab(1)}
+                            active={this.state.activeTab == 1 ? "true" : "false"}>Friday</div>
+
+                        <div className="navigation-item" 
+                            onClick={() => this.switchTab(2)}
+                            active={this.state.activeTab == 2 ? "true" : "false"}>Saturday</div>
+
+                    </div>
+
+                    <div className="program-list-header">
+                        <div className="program-time">TIME</div>
+                        <div className="program-time">PST</div>
+                    </div>
+
+                    <div className="program-list">
+                        {placeholderData.program.map((program, i) => {
+
+                            const time = new Date(program.time);
+
+                            const pst = time.toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles" });
+
+                            const pstTimeParts = pst.split(":");
+                            const pstTimeString = `${pstTimeParts[0]}${pst.split(" ")[1][0]}`;
+
+                            const utc = time.toLocaleTimeString("en-US");
+
+                            const timeParts = utc.split(":");
+                            const timeString = `${timeParts[0]}${utc.split(" ")[1][0]}`;
+
+                            return (
+                                <div className="program-entry" key={i} style={({
+                                    '--length': program.length
+                                })}>
+                                    <div className="program-time">{timeString}</div>
+                                    <div className="program-time">{pstTimeString}</div>
+                                    <div className="program-title">{program.name}</div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             )
-        }else{
+        } else {
             return (
                 <div className="App">
                 </div>
