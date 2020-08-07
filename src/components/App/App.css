@@ -1,3 +1,9 @@
+body {
+    background-image: url('./background.png');
+    background-color: #ff7500;
+    margin: 0;
+}
+
 .App {
     font-family: 'GothamNarrow', Arial, Helvetica, sans-serif;
     color: #010101;
