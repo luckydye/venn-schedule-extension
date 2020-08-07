@@ -95,6 +95,13 @@ module.exports = (_env,argv)=> {
           options:{
             name:"img/[name].[ext]"
           }
+        },
+        {
+          test: /\.woff2$/i, 
+          loader: "file-loader",
+          options:{
+            name:"./[name].[ext]"
+          }
         }
       ]
     },

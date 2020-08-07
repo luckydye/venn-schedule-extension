@@ -4,6 +4,20 @@ body {
     margin: 0;
 }
 
+@font-face {
+    font-family: "GothamNarrow";
+    font-weight: normal;
+    font-style: normal;
+    src: local("GothamNarrow"), local("GothamNarrow"), url(./GothamNarrow-Bold.woff2) format("woff2");
+}
+
+@font-face {
+    font-family: "GothamNarrow";
+    font-weight: bold;
+    font-style: normal;
+    src: local("GothamNarrow"), local("GothamNarrow"), url(./GothamNarrow-Black.woff2) format("woff2");
+}
+
 .App {
     font-family: 'GothamNarrow', Arial, Helvetica, sans-serif;
     color: #010101;
